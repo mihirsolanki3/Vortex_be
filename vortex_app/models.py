@@ -6,7 +6,7 @@ from .manager import UserManager
 
 #Abstructuser
 
-class User(AbstractUser):
+class User(AbstractUser): 
     user_bio=models.CharField(max_length=100)
     objects=UserManager()
 
