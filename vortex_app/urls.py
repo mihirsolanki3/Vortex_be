@@ -13,8 +13,11 @@ router.register(r'subscriptions',views.SubscriptionsViewSet)
 router.register(r'content_interaction',views.ContentInteractionViewSet)
 router.register(r'search',views.Search_RetrievalViewSet)
 router.register(r'source',views.SourceViewSet)
+router.register(r'category',views.CategoryViewSet)
+router.register(r'fileupload',views.FileUploadViewSet)
 
 
 urlpatterns = [
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    path('profile/', views.ProfileView.as_view())
 ] 

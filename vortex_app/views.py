@@ -6,6 +6,8 @@ from rest_framework import viewsets
 from django.shortcuts import render
 from vortex_app.models import *
 from vortex_app.serializer import *
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 #from django.contrib.auth import get_user_model
 
 #User = get_user_model()
@@ -25,6 +27,17 @@ class ProfileView(APIView):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = User_Serializer
+    
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = Category_Serializer
+    
+class FileUploadViewSet(viewsets.ModelViewSet):
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    queryset = FileUpload.objects.all()
+    serializer_class = FileUpload_Serializer
+    search_fields = ['category__category_name']
+    filterset_fields = ['category']
     
 class ContentViewSet(viewsets.ModelViewSet):
     queryset=Content.objects.all()
