@@ -13,4 +13,5 @@ pycparser==2.21
 PyJWT==2.8.0
 pytz==2024.1
 sqlparse==0.4.4
+requests
 tzdata==2024.1
