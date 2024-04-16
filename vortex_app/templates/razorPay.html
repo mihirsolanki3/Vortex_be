@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Razorpay Payment</title>
+  </head>
+  <body>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      var options = {
+        key: "{{RAZORPAY_ID}}",
+        amount: "{{payment.amount}}",
+        currency: "INR",
+        name: "Vortex",
+        description: "Subscription",
+        image: "https://example.com/your_logo",
+        order_id: "{{payment.id}}",
+        callback_url: "http://localhost:8000/api/response/?user={{email}}&amount={{amount}}",
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      var rzp1 = new Razorpay(options);
+
+      // Open Razorpay checkout modal on page load
+      window.onload = function () {
+        rzp1.open();
+      };
+    </script>
+  </body>
+</html>

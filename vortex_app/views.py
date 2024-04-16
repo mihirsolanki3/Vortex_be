@@ -10,9 +10,12 @@ from vortex_app.models import *
 from vortex_app.serializer import *
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.files.base import ContentFile
 from rest_framework.pagination import PageNumberPagination
+import razorpay
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 
 class FileUploadPagination(PageNumberPagination):
@@ -34,6 +37,7 @@ class ProfileView(APIView):
             'email': str(request.user.email),
             'first_name': str(request.user.first_name),
             'last_name': str(request.user.last_name),
+            'user_type': str(request.user.user_type)
         }
         return Response(content)
 
@@ -53,7 +57,7 @@ class FileUploadViewSet(viewsets.ModelViewSet):
                        filters.SearchFilter, filters.OrderingFilter]
     queryset = FileUpload.objects.all().order_by('?')
     serializer_class = FileUpload_Serializer
-    search_fields = ['category__category_name']
+    search_fields = ['category__category_name', "image"]
     filterset_fields = ['category']
     pagination_class = FileUploadPagination
 
@@ -101,13 +105,17 @@ class SourceViewSet(viewsets.ModelViewSet):
 def download_photo_from_unsplash(request):
     categories = Category.objects.all()
     for category in categories:
-        for page in range(1, 100):
+        for page in range(1, 2):
             response = requests.get(
                 "https://api.unsplash.com/search/photos/", params={"client_id": "zF8Ku92rcNtoldkP2sKie1-Vs8h9B6OK9LIqTKoDrdM", "query": category.category_name, "page": page}
             )
             if response.status_code == 200:
                 photo_data = response.json()['results']
+                if not photo_data:
+                    break
                 for picture in photo_data:
+                    if FileUpload.objects.filter(image=f'{picture.get("slug")}.jpg').exists():
+                        continue
                     photo_url = picture.get("urls").get("full")
                     photo_response = requests.get(photo_url)
                     if photo_response.status_code == 200:
@@ -119,3 +127,30 @@ def download_photo_from_unsplash(request):
                             f'{picture.get("slug")}.jpg', ContentFile(photo_content))
                         photo.save()
         return JsonResponse({"status": "success", "message": "Downloaded"})
+
+
+def payment(request):
+    user = User.objects.filter(email=request.GET.get('user')).last()
+    if not user:
+        return JsonResponse({"error": "User not found"})
+    client = razorpay.Client(
+        auth=(settings.RAZORPAY_ID, settings.RAZORPAY_SECRET))
+    payment = client.order.create(
+        {"amount": request.GET.get("amount"), "currency": "INR", "payment_capture": 1})
+    return render(request, "razorPay.html", {'payment': payment, "RAZORPAY_ID": settings.RAZORPAY_ID, "email": user.email, "amount": request.GET.get("amount")})
+
+
+@csrf_exempt
+def response(request):
+    print(request.POST)
+    if request.POST.get('razorpay_payment_id'):
+        user_type = "free"
+        if request.GET.get("amount") == "139":
+            user_type = "professional"
+        if request.GET.get("amount") == "399":
+            user_type = "enterprise"
+        User.objects.filter(email=request.GET.get('user')
+                            ).update(user_type=user_type)
+        return HttpResponse("Payment Successfully")
+    else:
+        return HttpResponse("Payment Failure")
