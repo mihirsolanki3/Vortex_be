@@ -106,3 +106,9 @@ class Source(models.Model):
     source_name = models.CharField(max_length=50)
     api_endpoint = models.CharField(max_length=100)
     apikey = models.CharField(max_length=50)
+
+
+class ImageDownload(models.Model):
+    user = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
+    count = models.IntegerField(default=0)
+    date = models.DateField()

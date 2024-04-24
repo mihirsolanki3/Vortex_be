@@ -16,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from datetime import date
 
 
 class FileUploadPagination(PageNumberPagination):
@@ -40,6 +41,33 @@ class ProfileView(APIView):
             'user_type': str(request.user.user_type)
         }
         return Response(content)
+
+
+class DownloadImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        photo = FileUpload.objects.filter(id=id).last()
+        if photo:
+            user = request.user.user_type
+            download, created = ImageDownload.objects.get_or_create(
+                user=request.user, date=date.today()
+            )
+            should_download = False
+            if user == "free" and download.count <= 5:
+                should_download = True
+            if user == "professional" and download.count <= 25:
+                should_download = True
+            if user == "enterprise":
+                should_download = True
+            download.count += 1
+            download.save()
+            if not should_download:
+                return Response({"message": "Download limit exceeded"}, status=status.HTTP_403_FORBIDDEN)
+            serializer = FileUpload_Serializer(photo)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class UserViewSet(viewsets.ModelViewSet):

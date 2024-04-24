@@ -158,3 +158,9 @@ MEDIA_URL = '/api/'
 
 RAZORPAY_ID = "rzp_test_Y5Ano2xLHT9syD"
 RAZORPAY_SECRET = "H4WCMaxId5AP8s1FYQ7YVsg6"
+
+# Set the token expiration time
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
