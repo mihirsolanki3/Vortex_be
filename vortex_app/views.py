@@ -142,7 +142,7 @@ def download_photo_from_unsplash(request):
                 if not photo_data:
                     break
                 for picture in photo_data:
-                    if FileUpload.objects.filter(image=f'{picture.get("slug")}.jpg').exists():
+                    if FileUpload.objects.filter(image=f'/api/uploads/{picture.get("slug")}.jpg').exists():
                         continue
                     photo_url = picture.get("urls").get("full")
                     photo_response = requests.get(photo_url)
@@ -154,7 +154,7 @@ def download_photo_from_unsplash(request):
                         photo.image.save(
                             f'{picture.get("slug")}.jpg', ContentFile(photo_content))
                         photo.save()
-        return JsonResponse({"status": "success", "message": "Downloaded"})
+    return JsonResponse({"status": "success", "message": "Downloaded"})
 
 
 def payment(request):
