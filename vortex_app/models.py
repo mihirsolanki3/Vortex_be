@@ -14,9 +14,6 @@ class User(AbstractUser):
     objects = UserManager()
 
 
-# create Models.
-
-
 class Category(models.Model):
     category_name = models.CharField(max_length=100)
 
@@ -112,3 +109,12 @@ class ImageDownload(models.Model):
     user = models.ForeignKey(User, default=None, on_delete=models.PROTECT)
     count = models.IntegerField(default=0)
     date = models.DateField()
+
+
+class Contact(models.Model):
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    company = models.CharField(max_length=150)
+    email = models.EmailField()
+    message = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)

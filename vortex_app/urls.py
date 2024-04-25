@@ -20,6 +20,7 @@ router.register(r'fileupload', views.FileUploadViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('profile/', views.ProfileView.as_view()),
+    path('contact/', views.ConatctView.as_view()),
     path('download-image/<id>/', views.DownloadImageView.as_view()),
     path('photo/', views.download_photo_from_unsplash),
     path('payment/', views.payment),

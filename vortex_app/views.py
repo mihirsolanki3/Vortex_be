@@ -17,6 +17,10 @@ import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from datetime import date
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 class FileUploadPagination(PageNumberPagination):
@@ -36,6 +40,7 @@ class ProfileView(APIView):
         content = {
             'user': str(request.user),
             'email': str(request.user.email),
+            'user_id': str(request.user.id),
             'first_name': str(request.user.first_name),
             'last_name': str(request.user.last_name),
             'user_type': str(request.user.user_type)
@@ -86,7 +91,7 @@ class FileUploadViewSet(viewsets.ModelViewSet):
     queryset = FileUpload.objects.all().order_by('?')
     serializer_class = FileUpload_Serializer
     search_fields = ['category__category_name', "image"]
-    filterset_fields = ['category']
+    filterset_fields = ['category', "user"]
     pagination_class = FileUploadPagination
 
 
@@ -108,6 +113,29 @@ class PaymentsViewSet(viewsets.ModelViewSet):
 class AdvertisementsViewSet(viewsets.ModelViewSet):
     queryset = Advertisements.objects.all()
     serializer_class = Advertisements_Serializer
+
+
+class ConatctView(APIView):
+    def post(self, request):
+        serializer = Contact_Serializer(data=request.data)
+        if serializer.is_valid():
+            subject = "Vortex Conatct Inquiry"
+            html_message = render_to_string(
+                'Receive.html', request.data)
+            plain_message = strip_tags(html_message)
+            email_send = send_mail(
+                subject, plain_message, settings.DEFAULT_FROM_EMAIL, settings.SEND_EMAIL_TO, fail_silently=False)
+            html_message = render_to_string(
+                'Send.html', request.data)
+            plain_message = strip_tags(html_message)
+            email = send_mail("Thank for contacting vortex", plain_message, settings.DEFAULT_FROM_EMAIL, [
+                request.data['email']], fail_silently=False)
+            if email_send:
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(data={"message": "Error while sending email"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SubscriptionsViewSet(viewsets.ModelViewSet):
