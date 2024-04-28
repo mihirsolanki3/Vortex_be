@@ -1,4 +1,7 @@
 <p>Name: {{ first_name }} {{ last_name }}</p>
-<p>Company: {{ company }}</p>
+{% if company %}
+  <p>Company: {{ company }}</p>
+{% endif %}
 <p>Email: {{ email }}</p>
+<p>Phone: {{ phone }}</p>
 <p>Message: {{ message }}</p>

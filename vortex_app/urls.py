@@ -25,4 +25,5 @@ urlpatterns = [
     path('photo/', views.download_photo_from_unsplash),
     path('payment/', views.payment),
     path('response/', views.response),
+    path('getCollection/', views.getCollection),
 ]

@@ -113,8 +113,9 @@ class ImageDownload(models.Model):
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    company = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
+    company = models.CharField(max_length=150, null=True, blank=True)
+    phone = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField()
     message = models.TextField()
     date = models.DateTimeField(auto_now_add=True)

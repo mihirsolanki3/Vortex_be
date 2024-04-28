@@ -161,6 +161,7 @@ class SourceViewSet(viewsets.ModelViewSet):
 def download_photo_from_unsplash(request):
     categories = Category.objects.all()
     for category in categories:
+        print(category)
         for page in range(1, 2):
             response = requests.get(
                 "https://api.unsplash.com/search/photos/", params={"client_id": "zF8Ku92rcNtoldkP2sKie1-Vs8h9B6OK9LIqTKoDrdM", "query": category.category_name, "page": page}
@@ -170,7 +171,7 @@ def download_photo_from_unsplash(request):
                 if not photo_data:
                     break
                 for picture in photo_data:
-                    if FileUpload.objects.filter(image=f'/api/uploads/{picture.get("slug")}.jpg').exists():
+                    if FileUpload.objects.filter(image=f'/uploads/{picture.get("slug")}.jpg').exists():
                         continue
                     photo_url = picture.get("urls").get("full")
                     photo_response = requests.get(photo_url)
@@ -183,6 +184,30 @@ def download_photo_from_unsplash(request):
                             f'{picture.get("slug")}.jpg', ContentFile(photo_content))
                         photo.save()
     return JsonResponse({"status": "success", "message": "Downloaded"})
+
+
+def getCollection(request):
+    data = []
+    for page in range(100):
+        url = "https://api.unsplash.com/collections"
+        params = {
+            "client_id": "zF8Ku92rcNtoldkP2sKie1-Vs8h9B6OK9LIqTKoDrdM",
+            "page": page,
+            "per_page": 12
+        }
+        response = requests.get(
+            url, params=params
+        )
+        print(page)
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+            for d in data:
+                Category.objects.create(category_name=d.get('title'))
+                print(d.get('title'))
+                data.append(d.get('title'))
+    
+    return JsonResponse({"data":data})
 
 
 def payment(request):
