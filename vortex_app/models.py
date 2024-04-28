@@ -18,7 +18,7 @@ class Category(models.Model):
     category_name = models.CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.category_name
+        return str(self.category_name)
 
 
 class FileUpload(models.Model):

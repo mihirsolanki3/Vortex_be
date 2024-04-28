@@ -83,6 +83,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = Category_Serializer
+    pagination_class = FileUploadPagination
 
 
 class FileUploadViewSet(viewsets.ModelViewSet):

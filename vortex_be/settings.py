@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     "corsheaders",
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -173,3 +174,5 @@ EMAIL_HOST_PASSWORD = 'gkeclsxzigpihdvg'  # Your email password
 EMAIL_USE_TLS = True  # Enable TLS (Transport Layer Security)
 DEFAULT_FROM_EMAIL = 'naxshah5@gmail.com'  # Default email address
 SEND_EMAIL_TO = ['naxshah5@gmail.com']  # List of email addresses
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

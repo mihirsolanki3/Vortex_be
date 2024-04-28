@@ -16,3 +16,4 @@ sqlparse==0.4.4
 requests
 tzdata==2024.1
 razorpay
+django-import-export
