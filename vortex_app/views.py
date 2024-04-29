@@ -96,26 +96,6 @@ class FileUploadViewSet(viewsets.ModelViewSet):
     pagination_class = FileUploadPagination
 
 
-class ContentViewSet(viewsets.ModelViewSet):
-    queryset = Content.objects.all()
-    serializer_class = Content_Serializer
-
-
-class Content_ModerationViewSet(viewsets.ModelViewSet):
-    queryset = Content_Moderation.objects.all()
-    serializer_class = Content_Moderation_Serializer
-
-
-class PaymentsViewSet(viewsets.ModelViewSet):
-    queryset = Payments.objects.all()
-    serializer_class = Payments_Serializer
-
-
-class AdvertisementsViewSet(viewsets.ModelViewSet):
-    queryset = Advertisements.objects.all()
-    serializer_class = Advertisements_Serializer
-
-
 class ConatctView(APIView):
     def post(self, request):
         serializer = Contact_Serializer(data=request.data)
@@ -137,26 +117,6 @@ class ConatctView(APIView):
             else:
                 return Response(data={"message": "Error while sending email"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SubscriptionsViewSet(viewsets.ModelViewSet):
-    queryset = Subscriptions.objects.all()
-    serializer_class = Subscriptions_Serializer
-
-
-class ContentInteractionViewSet(viewsets.ModelViewSet):
-    queryset = ContentInteraction.objects.all()
-    serializer_class = ContentInteraction_Serializer
-
-
-class Search_RetrievalViewSet(viewsets.ModelViewSet):
-    queryset = Search_Retrieval.objects.all()
-    serializer_class = Search_Retrieval_Serializer
-
-
-class SourceViewSet(viewsets.ModelViewSet):
-    queryset = Source.objects.all()
-    serializer_class = Source_Serializer
 
 
 def download_photo_from_unsplash(request):
