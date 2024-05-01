@@ -90,6 +90,7 @@ class FileUploadViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter]
     queryset = FileUpload.objects.all().order_by('?')
+    # queryset = FileUpload.objects.all().order_by('-id')
     serializer_class = FileUpload_Serializer
     search_fields = ['category__category_name', "image"]
     filterset_fields = ['category', "user"]
